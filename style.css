@@ -46,32 +46,91 @@ body::before{
   mix-blend-mode: overlay;
 }
 
-/* ============ Splash ============ */
+/* ============ Splash (P5 colors: red/white/black, no white shapes, no darkening) ============ */
 #splash{
   position: fixed;
   inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+
+  /* Чистая спираль без затемнения */
   background:
-    linear-gradient(135deg, #000 0%, #111 60%, #000 100%);
-  color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+    repeating-radial-gradient(circle at center,
+      #ff1e2d 0 56px,
+      #000 56px 112px
+    );
 
   animation: splashOut 0.9s ease forwards;
-  animation-delay: 1.7s;
+  animation-delay: 2s;
 }
 
+/* Лёгкий “комикс-шум” (не затемняет, только добавляет фактуру) */
+#splash::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.18;
+
+  background:
+    radial-gradient(#ffffff 1px, transparent 1px);
+  background-size: 10px 10px;
+  mix-blend-mode: overlay;
+}
+
+/* ===== ТЕКСТ: тёмный + белый акцент ===== */
 #splash h1{
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: 0 18px;
+
   font-weight: 900;
+  font-size: clamp(34px, 5.2vw, 74px);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 18px 26px;
-  background: var(--red);
+  text-align: center;
+  line-height: 1.05;
+
+  /* ТЁМНЫЙ текст */
   color: #000;
-  transform: skew(var(--skew));
-  box-shadow: var(--shadow);
-  border: 3px solid #000;
+
+  /* БЕЛАЯ "подложка" через обводку */
+  text-shadow:
+    /* белая жирная обводка */
+    -4px -4px 0 #fff,
+     4px -4px 0 #fff,
+    -4px  4px 0 #fff,
+     4px  4px 0 #fff,
+    -4px  0px 0 #fff,
+     4px  0px 0 #fff,
+     0px -4px 0 #fff,
+     0px  4px 0 #fff,
+
+    /* внешняя чёрная кромка для контраста */
+    -6px -6px 0 #000,
+     6px -6px 0 #000,
+    -6px  6px 0 #000,
+     6px  6px 0 #000;
+
+  transform: rotate(-7deg);
+  animation: textPop 0.5s cubic-bezier(.2,.9,.25,1) forwards;
+}
+
+/* Появление текста */
+@keyframes textPop{
+  from{
+    opacity: 0;
+    transform: translateY(10px) scale(.97) rotate(-14deg);
+    filter: blur(1px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(-7deg);
+    filter: blur(0);
+  }
 }
 
 @keyframes splashOut{
@@ -176,6 +235,11 @@ section{
   position: relative;
   overflow:hidden;
   transition: 0.18s ease;
+}
+
+/* Чтобы не уходили под меню */
+section{ 
+  scroll-margin-top: 90px;
 }
 
 /* Красный уголок-акцент как “стикер” */
@@ -308,5 +372,4 @@ footer{
 @media (max-width: 520px){
   nav a{ padding: 9px 10px; margin: 6px 4px; }
   section{ padding: 16px; }
-}
-
+} 
